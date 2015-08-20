@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class InformationViewController: UIViewController {
+class InformationViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var whereStudyLabel: UILabel!
     @IBOutlet weak var locationTextField: UITextField!
@@ -19,10 +19,30 @@ class InformationViewController: UIViewController {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var submitButton: UIButton!
     @IBOutlet weak var findButton: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     var userID: String?
     var firstName: String?
     var lastName: String?
+    
+    override func viewDidLoad() {
+        locationTextField.delegate = self
+        urlTextField.delegate = self
+        getUserData(userID!)
+        urlView.hidden = true
+        submitButton.hidden = true
+        mapView.hidden = true
+        activityIndicator.hidden = true
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        self.view.endEditing(true)
+    }
     
     @IBAction func findOnTheMap(sender: UIButton) {
         if self.mapView.annotations.count != 0 {
@@ -34,6 +54,8 @@ class InformationViewController: UIViewController {
         let localSearch = MKLocalSearch(request: localSearchRequest)
         localSearch.startWithCompletionHandler { (response, error) -> Void in
             if let latitude = response?.boundingRegion.center.latitude, longitude = response?.boundingRegion.center.longitude {
+                self.activityIndicator.hidden = false
+                self.activityIndicator.startAnimating()
                 let pointAnnotation = MKPointAnnotation()
                 pointAnnotation.title = self.locationTextField.text
                 pointAnnotation.coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -48,6 +70,8 @@ class InformationViewController: UIViewController {
                     self.whereView.hidden = true
                     self.findButton.hidden = true
                 }
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.hidden = true
             }
             else {
                 let alert = UIAlertController(title: nil, message: "Cannot locate search query.", preferredStyle: .Alert)
@@ -76,13 +100,6 @@ class InformationViewController: UIViewController {
         dismissViewControllerAnimated(true, completion: nil)
     }
     
-    override func viewDidLoad() {
-        getUserData(userID!)
-        urlView.hidden = true
-        submitButton.hidden = true
-        mapView.hidden = true
-    }
-    
     func updateLocation() {
         let localSearchRequest = MKLocalSearchRequest()
         localSearchRequest.naturalLanguageQuery = self.locationTextField.text
@@ -99,7 +116,10 @@ class InformationViewController: UIViewController {
                 let session = NSURLSession.sharedSession()
                 let task = session.dataTaskWithRequest(request) { data, response, error in
                     if error != nil {
-                        print(error!)
+                        let alert = UIAlertController(title: nil, message: "Location updating failed.", preferredStyle: .Alert)
+                        let cancelAlert = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
+                        alert.addAction(cancelAlert)
+                        self.presentViewController(alert, animated: true, completion: nil)
                         return
                     }
                     print(NSString(data: data!, encoding: NSUTF8StringEncoding)!)

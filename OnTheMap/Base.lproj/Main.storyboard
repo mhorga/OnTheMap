@@ -354,6 +354,9 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ZtD-GJ-mUw">
+                                <rect key="frame" x="-10" y="-10" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -371,8 +374,10 @@
                             <constraint firstItem="eQK-Ip-cGd" firstAttribute="top" secondItem="zNm-HJ-qFp" secondAttribute="bottom" id="6og-Sc-GFU">
                                 <variation key="widthClass=compact" constant="-20"/>
                             </constraint>
+                            <constraint firstItem="1Zk-53-ueB" firstAttribute="top" secondItem="ZtD-GJ-mUw" secondAttribute="bottom" constant="243" id="9Sz-cX-P24"/>
                             <constraint firstItem="wf2-wB-753" firstAttribute="leading" secondItem="99M-3K-pwc" secondAttribute="leading" id="9eU-OE-4Mj"/>
                             <constraint firstItem="wf2-wB-753" firstAttribute="trailing" secondItem="eQK-Ip-cGd" secondAttribute="trailing" id="9ka-2p-FqL"/>
+                            <constraint firstItem="ZtD-GJ-mUw" firstAttribute="centerX" secondItem="eQK-Ip-cGd" secondAttribute="centerX" id="CAC-J8-M2i"/>
                             <constraint firstAttribute="trailing" secondItem="wf2-wB-753" secondAttribute="trailing" id="HGt-Sg-tmh"/>
                             <constraint firstItem="wf2-wB-753" firstAttribute="top" secondItem="eQK-Ip-cGd" secondAttribute="bottom" id="NHB-xu-YcX"/>
                             <constraint firstItem="wf2-wB-753" firstAttribute="trailing" secondItem="eQK-Ip-cGd" secondAttribute="trailing" id="Vu5-MV-FEd"/>
@@ -388,6 +393,7 @@
                             <mask key="subviews">
                                 <exclude reference="wf2-wB-753"/>
                                 <exclude reference="eQK-Ip-cGd"/>
+                                <exclude reference="ZtD-GJ-mUw"/>
                             </mask>
                             <mask key="constraints">
                                 <exclude reference="0vg-19-yvG"/>
@@ -407,12 +413,15 @@
                                 <exclude reference="cqJ-wX-5dD"/>
                                 <exclude reference="mN2-i2-XJk"/>
                                 <exclude reference="xd6-rj-F0c"/>
+                                <exclude reference="CAC-J8-M2i"/>
+                                <exclude reference="9Sz-cX-P24"/>
                             </mask>
                         </variation>
                         <variation key="widthClass=compact">
                             <mask key="subviews">
                                 <include reference="wf2-wB-753"/>
                                 <include reference="eQK-Ip-cGd"/>
+                                <include reference="ZtD-GJ-mUw"/>
                             </mask>
                             <mask key="constraints">
                                 <include reference="0vg-19-yvG"/>
@@ -432,11 +441,14 @@
                                 <exclude reference="cqJ-wX-5dD"/>
                                 <exclude reference="mN2-i2-XJk"/>
                                 <exclude reference="xd6-rj-F0c"/>
+                                <include reference="CAC-J8-M2i"/>
+                                <include reference="9Sz-cX-P24"/>
                             </mask>
                         </variation>
                     </view>
                     <tabBarItem key="tabBarItem" title="Map" image="map" id="wAU-cG-1xg"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="ZtD-GJ-mUw" id="zXb-E7-OW9"/>
                         <outlet property="mapView" destination="wf2-wB-753" id="LNF-fT-u9k"/>
                     </connections>
                 </viewController>
@@ -744,6 +756,9 @@
                                     <action selector="submit:" destination="sAy-ac-abt" eventType="touchUpInside" id="jcF-ig-yfw"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="M3q-8a-5cY">
+                                <rect key="frame" x="-10" y="-10" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -759,11 +774,13 @@
                             <constraint firstItem="Y6W-vO-90A" firstAttribute="baseline" secondItem="yPt-TV-ljQ" secondAttribute="baseline" id="Z66-CP-BaI"/>
                             <constraint firstItem="hcH-AT-PVv" firstAttribute="trailing" secondItem="FJd-M3-2h9" secondAttribute="trailing" id="aHW-TX-w2D"/>
                             <constraint firstItem="yPt-TV-ljQ" firstAttribute="centerX" secondItem="Y6W-vO-90A" secondAttribute="centerX" id="f1I-kU-eES"/>
+                            <constraint firstItem="M3q-8a-5cY" firstAttribute="centerX" secondItem="yPt-TV-ljQ" secondAttribute="centerX" id="k4c-zR-LgC"/>
                             <constraint firstItem="Gam-Xc-PUc" firstAttribute="trailing" secondItem="FJd-M3-2h9" secondAttribute="trailing" id="ldo-Wr-hZF"/>
                             <constraint firstItem="XTw-cB-ZVQ" firstAttribute="top" secondItem="hcH-AT-PVv" secondAttribute="bottom" constant="1" id="log-Nb-RAY"/>
                             <constraint firstItem="Gam-Xc-PUc" firstAttribute="top" secondItem="XTw-cB-ZVQ" secondAttribute="bottom" constant="7" id="mAt-jq-Dbj"/>
                             <constraint firstItem="YeE-Nz-3dl" firstAttribute="centerX" secondItem="Y6W-vO-90A" secondAttribute="centerX" id="nCS-g8-4nV"/>
                             <constraint firstItem="FJd-M3-2h9" firstAttribute="leading" secondItem="WRm-2S-5Z7" secondAttribute="leading" id="qhz-kw-Eba"/>
+                            <constraint firstAttribute="bottom" secondItem="M3q-8a-5cY" secondAttribute="bottom" constant="242" id="rnU-7w-dBu"/>
                             <constraint firstAttribute="bottom" secondItem="FJd-M3-2h9" secondAttribute="bottom" constant="364" id="uK3-Nq-SWc"/>
                             <constraint firstItem="yPt-TV-ljQ" firstAttribute="top" secondItem="Gam-Xc-PUc" secondAttribute="bottom" constant="6" id="wu6-Iv-Jbv"/>
                             <constraint firstItem="YeE-Nz-3dl" firstAttribute="leading" secondItem="Gam-Xc-PUc" secondAttribute="leading" id="x1Z-ro-Dld"/>
@@ -780,15 +797,9 @@
                                 <exclude reference="FJd-M3-2h9"/>
                                 <exclude reference="YeE-Nz-3dl"/>
                                 <exclude reference="Y6W-vO-90A"/>
+                                <exclude reference="M3q-8a-5cY"/>
                             </mask>
                             <mask key="constraints">
-                                <exclude reference="3b7-Tp-rXV"/>
-                                <exclude reference="DBy-A1-Ic7"/>
-                                <exclude reference="log-Nb-RAY"/>
-                                <exclude reference="Z66-CP-BaI"/>
-                                <exclude reference="f1I-kU-eES"/>
-                                <exclude reference="wu6-Iv-Jbv"/>
-                                <exclude reference="zj3-jY-Za5"/>
                                 <exclude reference="aHW-TX-w2D"/>
                                 <exclude reference="zoh-lR-NNW"/>
                                 <exclude reference="COh-sk-Kgg"/>
@@ -796,6 +807,9 @@
                                 <exclude reference="Nqr-rl-khs"/>
                                 <exclude reference="qhz-kw-Eba"/>
                                 <exclude reference="uK3-Nq-SWc"/>
+                                <exclude reference="3b7-Tp-rXV"/>
+                                <exclude reference="DBy-A1-Ic7"/>
+                                <exclude reference="log-Nb-RAY"/>
                                 <exclude reference="3xf-Bn-Yrh"/>
                                 <exclude reference="IUf-5g-PUo"/>
                                 <exclude reference="ldo-Wr-hZF"/>
@@ -804,6 +818,12 @@
                                 <exclude reference="nCS-g8-4nV"/>
                                 <exclude reference="x1Z-ro-Dld"/>
                                 <exclude reference="y8T-qp-QnV"/>
+                                <exclude reference="k4c-zR-LgC"/>
+                                <exclude reference="rnU-7w-dBu"/>
+                                <exclude reference="f1I-kU-eES"/>
+                                <exclude reference="wu6-Iv-Jbv"/>
+                                <exclude reference="zj3-jY-Za5"/>
+                                <exclude reference="Z66-CP-BaI"/>
                             </mask>
                         </variation>
                         <variation key="widthClass=compact">
@@ -815,15 +835,9 @@
                                 <include reference="FJd-M3-2h9"/>
                                 <include reference="YeE-Nz-3dl"/>
                                 <include reference="Y6W-vO-90A"/>
+                                <include reference="M3q-8a-5cY"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="3b7-Tp-rXV"/>
-                                <include reference="DBy-A1-Ic7"/>
-                                <include reference="log-Nb-RAY"/>
-                                <include reference="Z66-CP-BaI"/>
-                                <include reference="f1I-kU-eES"/>
-                                <include reference="wu6-Iv-Jbv"/>
-                                <include reference="zj3-jY-Za5"/>
                                 <include reference="aHW-TX-w2D"/>
                                 <include reference="zoh-lR-NNW"/>
                                 <include reference="COh-sk-Kgg"/>
@@ -831,6 +845,9 @@
                                 <include reference="Nqr-rl-khs"/>
                                 <include reference="qhz-kw-Eba"/>
                                 <include reference="uK3-Nq-SWc"/>
+                                <include reference="3b7-Tp-rXV"/>
+                                <include reference="DBy-A1-Ic7"/>
+                                <include reference="log-Nb-RAY"/>
                                 <include reference="3xf-Bn-Yrh"/>
                                 <include reference="IUf-5g-PUo"/>
                                 <include reference="ldo-Wr-hZF"/>
@@ -839,10 +856,17 @@
                                 <include reference="nCS-g8-4nV"/>
                                 <include reference="x1Z-ro-Dld"/>
                                 <include reference="y8T-qp-QnV"/>
+                                <include reference="k4c-zR-LgC"/>
+                                <include reference="rnU-7w-dBu"/>
+                                <include reference="f1I-kU-eES"/>
+                                <include reference="wu6-Iv-Jbv"/>
+                                <include reference="zj3-jY-Za5"/>
+                                <include reference="Z66-CP-BaI"/>
                             </mask>
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="M3q-8a-5cY" id="BNQ-1l-Wdd"/>
                         <outlet property="findButton" destination="yPt-TV-ljQ" id="mWT-FF-jpY"/>
                         <outlet property="locationTextField" destination="SSc-p7-adM" id="VYZ-Yw-sPe"/>
                         <outlet property="mapView" destination="YeE-Nz-3dl" id="V2E-YX-6Qe"/>

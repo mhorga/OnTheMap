@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		292396611B861AF800590987 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292396601B861AF800590987 /* Networking.swift */; };
 		293079B01B7E4477001E30F5 /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 293079AF1B7E4477001E30F5 /* InformationViewController.swift */; };
 		299EC4E51B766C5900FF744D /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 299EC4E41B766C5900FF744D /* MapKit.framework */; };
 		299EC4E71B766E1500FF744D /* ListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299EC4E61B766E1500FF744D /* ListTableViewController.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		292396601B861AF800590987 /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
 		293079AF1B7E4477001E30F5 /* InformationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InformationViewController.swift; sourceTree = "<group>"; };
 		299EC4E41B766C5900FF744D /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		299EC4E61B766E1500FF744D /* ListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListTableViewController.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 				299EC4E61B766E1500FF744D /* ListTableViewController.swift */,
 				29FE04BF1B7550ED00B2F7F5 /* LoginViewController.swift */,
 				299EC4E81B76702400FF744D /* MapViewController.swift */,
+				292396601B861AF800590987 /* Networking.swift */,
 				29FE04C11B7550ED00B2F7F5 /* Main.storyboard */,
 				29FE04C41B7550EE00B2F7F5 /* Assets.xcassets */,
 				29FE04C91B7550EE00B2F7F5 /* Info.plist */,
@@ -213,6 +216,7 @@
 				299EC4E71B766E1500FF744D /* ListTableViewController.swift in Sources */,
 				29FE04C01B7550ED00B2F7F5 /* LoginViewController.swift in Sources */,
 				29FE04BE1B7550ED00B2F7F5 /* AppDelegate.swift in Sources */,
+				292396611B861AF800590987 /* Networking.swift in Sources */,
 				299EC4E91B76702400FF744D /* MapViewController.swift in Sources */,
 				293079B01B7E4477001E30F5 /* InformationViewController.swift in Sources */,
 			);

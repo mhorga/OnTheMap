@@ -14,10 +14,12 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     var userID: String?
     
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         getStudentLocations()
+        activityIndicator.hidden = true
     }
 
     @IBAction func refresh(sender: UIBarButtonItem) {
@@ -75,7 +77,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request) { data, response, error in
             if error != nil {
-                print(error!)
+                let alert = UIAlertController(title: nil, message: "Download failed.", preferredStyle: .Alert)
+                let cancelAlert = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
+                alert.addAction(cancelAlert)
+                self.presentViewController(alert, animated: true, completion: nil)
                 return
             } else {
                 let parsedResult = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments, error: nil) as! NSDictionary
@@ -102,7 +107,11 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             annotations.append(annotation)
         }
         dispatch_async(dispatch_get_main_queue()) {
+            self.activityIndicator.hidden = false
+            self.activityIndicator.startAnimating()
             self.mapView.addAnnotations(annotations)
+            self.activityIndicator.stopAnimating()
+            self.activityIndicator.hidden = true
         }
     }
     

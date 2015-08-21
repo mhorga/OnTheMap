@@ -44,7 +44,16 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
         self.view.endEditing(true)
     }
     
+    func showAlert(message: String) {
+        let alertView = UIAlertController(title: "", message: message, preferredStyle: .Alert)
+        let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+        alertView.addAction(action)
+        self.presentViewController(alertView, animated: true, completion: nil)
+    }
+    
     @IBAction func findOnTheMap(sender: UIButton) {
+        self.activityIndicator.hidden = false
+        self.activityIndicator.startAnimating()
         if self.mapView.annotations.count != 0 {
             let annotation = self.mapView.annotations[0] as! MKAnnotation
             self.mapView.removeAnnotation(annotation)
@@ -54,8 +63,6 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
         let localSearch = MKLocalSearch(request: localSearchRequest)
         localSearch.startWithCompletionHandler { (response, error) -> Void in
             if let latitude = response?.boundingRegion.center.latitude, longitude = response?.boundingRegion.center.longitude {
-                self.activityIndicator.hidden = false
-                self.activityIndicator.startAnimating()
                 let pointAnnotation = MKPointAnnotation()
                 pointAnnotation.title = self.locationTextField.text
                 pointAnnotation.coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -74,10 +81,9 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
                 self.activityIndicator.hidden = true
             }
             else {
-                let alert = UIAlertController(title: nil, message: "Cannot locate search query.", preferredStyle: .Alert)
-                let cancelAlert = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
-                alert.addAction(cancelAlert)
-                self.presentViewController(alert, animated: true, completion: nil)
+                self.showAlert("Cannot locate search query.")
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.hidden = true
                 return
             }
         }
@@ -88,10 +94,7 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
             updateLocation()
             dismissViewControllerAnimated(true, completion: nil)
         } else {
-            let alert = UIAlertController(title: nil, message: "Use http:// in front of your URL.", preferredStyle: .Alert)
-            let cancelAlert = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
-            alert.addAction(cancelAlert)
-            self.presentViewController(alert, animated: true, completion: nil)
+            self.showAlert("Use http:// in front of your URL.")
             return
         }
     }
@@ -111,15 +114,12 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
                 request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
                 request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
                 request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-                request.HTTPBody = "{\"uniqueKey\": \(self.userID!), \"firstName\": \"\(self.firstName!)\", \"lastName\": \"\(self.lastName!)\",\"mapString\": \"\(self.locationTextField.text!)\", \"mediaURL\": \"\(self.urlTextField.text!)\",\"latitude\": \(latitude), \"longitude\": \(longitude)}".dataUsingEncoding(NSUTF8StringEncoding)
+                request.HTTPBody = "{\"uniqueKey\": \(self.userID!), \"firstName\": \"\(self.firstName!)\", \"lastName\": \"\(self.lastName!)\",\"mapString\": \"\(self.locationTextField.text!)\", \"mediaURL\": \"\(self.urlTextField.text!)\",\"latitude\": \(String(stringInterpolationSegment: latitude)), \"longitude\": \(String(stringInterpolationSegment: longitude))}".dataUsingEncoding(NSUTF8StringEncoding)
                 print("\(self.userID!) \(self.firstName!) \(self.lastName!) \(self.locationTextField.text!) \(self.urlTextField.text!) \(latitude) \(longitude)")
                 let session = NSURLSession.sharedSession()
                 let task = session.dataTaskWithRequest(request) { data, response, error in
                     if error != nil {
-                        let alert = UIAlertController(title: nil, message: "Location updating failed.", preferredStyle: .Alert)
-                        let cancelAlert = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
-                        alert.addAction(cancelAlert)
-                        self.presentViewController(alert, animated: true, completion: nil)
+                        self.showAlert("Location updating failed.")
                         return
                     }
                     print(NSString(data: data!, encoding: NSUTF8StringEncoding)!)

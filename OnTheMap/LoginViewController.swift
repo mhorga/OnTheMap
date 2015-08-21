@@ -13,67 +13,49 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
-    var userID: String? = nil
-    var sessionID: String? = nil
+    var user =  User()
     
     @IBAction func loginButton(sender: UIButton) {
-        let request = NSMutableURLRequest(URL: NSURL(string: "https://www.udacity.com/api/session")!)
-        request.HTTPMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.HTTPBody = "{\"udacity\": {\"username\": \"\(emailTextField.text!)\", \"password\": \"\(passwordTextField.text!)\"}}".dataUsingEncoding(NSUTF8StringEncoding)
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request) { data, response, error in
-            if error != nil {
-                dispatch_async(dispatch_get_main_queue()) {
-                    let alertView = UIAlertController(title: "", message: "Failed network connection.", preferredStyle: UIAlertControllerStyle.Alert)
-                    let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
-                    alertView.addAction(action)
-                    self.presentViewController(alertView, animated: true, completion: nil)
-                }
-                return
+        user.username = emailTextField.text
+        user.password = passwordTextField.text
+        Networking.sharedInstance().loginToUdacity(user) { (success, returnKey, errorString) in
+            if errorString != nil {
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.showAlert(errorString!)
+                })
             } else {
-                let newData = data!.subdataWithRange(NSMakeRange(5, data!.length - 5)) /* subset response data! */
-                let parsedResult = NSJSONSerialization.JSONObjectWithData(newData, options: NSJSONReadingOptions.AllowFragments, error: nil) as! NSDictionary
-                if parsedResult["account"] != nil {
-                    if let registered = parsedResult["account"]!["registered"] as? Int {
-                        if registered == 1 {
-                            self.userID = parsedResult["account"]!["key"] as? String
-                            self.sessionID = parsedResult["session"]!["id"] as? String
-                        }
-                    }
-                    dispatch_async(dispatch_get_main_queue()) {
+                if success {
+                    self.user.userID = returnKey!
+                    dispatch_async(dispatch_get_main_queue(), {
                         let controller = self.storyboard?.instantiateViewControllerWithIdentifier("tabBar") as! UITabBarController
                         let mapVC = controller.customizableViewControllers?.first as! MapViewController
-                        mapVC.userID = self.userID
+                        mapVC.userID = self.user.userID
                         let listTVC = controller.customizableViewControllers?.last as! ListTableViewController
-                        listTVC.userID = self.userID
+                        listTVC.userID = self.user.userID
                         self.presentViewController(controller, animated: true, completion: nil)
-                    }
+                    })
                 } else {
-                    dispatch_async(dispatch_get_main_queue()) {
-                        let alertView = UIAlertController(title: "", message: "Invalid email or password.", preferredStyle: UIAlertControllerStyle.Alert)
-                        let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
-                        alertView.addAction(action)
-                        self.presentViewController(alertView, animated: true, completion: nil)
-                    }
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.showAlert(errorString!)
+                    })
                 }
             }
         }
-        task.resume()
-        self.emailTextField.text = nil
-        self.passwordTextField.text = nil
+        emailTextField.text = nil
+        passwordTextField.text = nil
     }
     
     @IBAction func signUpButton(sender: UIButton) {
-        let url = NSURL(string: "https://www.udacity.com/account/auth#!/signup")
-        UIApplication.sharedApplication().openURL(url!)
+        UIApplication.sharedApplication().openURL(NSURL(string: Networking.Constants.udacitySignUpURL)!)
     }
     
     @IBAction func facebookButton(sender: UIButton) {
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    func showAlert(message: String) {
+        let alertView = UIAlertController(title: "", message: message, preferredStyle: .Alert)
+        let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+        alertView.addAction(action)
+        self.presentViewController(alertView, animated: true, completion: nil)
     }
 }

@@ -22,10 +22,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         activityIndicator.hidden = true
     }
 
-    @IBAction func refresh(sender: UIBarButtonItem) {
-        getStudentLocations()
-    }
-    
     @IBAction func changeDetails(sender: UIBarButtonItem) {
         let controller = self.storyboard?.instantiateViewControllerWithIdentifier("infoVC") as! InformationViewController
         if userID != nil {
@@ -48,39 +44,19 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     @IBAction func logout(sender: UIBarButtonItem) {
-        let request = NSMutableURLRequest(URL: NSURL(string: "https://www.udacity.com/api/session")!)
-        request.HTTPMethod = "DELETE"
-        var xsrfCookie: NSHTTPCookie? = nil
-        let sharedCookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-        for cookie in sharedCookieStorage.cookies! {
-            if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie as? NSHTTPCookie }
-        }
-        if let xsrfCookie = xsrfCookie {
-            request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
-        }
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request) { data, response, error in
-            if error != nil {
-                print(error!)
-                return
-            }
-        }
-        task.resume()
+        let task = Networking.taskForLogout()
         dismissViewControllerAnimated(true, completion: nil)
     }
     
     func getStudentLocations() {
-        let request = NSMutableURLRequest(URL: NSURL(string: "https://api.parse.com/1/classes/StudentLocation?limit=100")!)
+        let request = NSMutableURLRequest(URL: NSURL(string: Networking.Constants.parseURL)!)
         request.addValue("-updatedAt", forHTTPHeaderField: "order")
         request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
         request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request) { data, response, error in
             if error != nil {
-                let alert = UIAlertController(title: nil, message: "Download failed.", preferredStyle: .Alert)
-                let cancelAlert = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
-                alert.addAction(cancelAlert)
-                self.presentViewController(alert, animated: true, completion: nil)
+                self.showAlert("Download failed.")
                 return
             } else {
                 let parsedResult = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments, error: nil) as! NSDictionary
@@ -90,6 +66,14 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             }
         }
         task.resume()
+    }
+    
+    
+    func showAlert(message: String) {
+        let alertView = UIAlertController(title: "", message: message, preferredStyle: .Alert)
+        let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+        alertView.addAction(action)
+        self.presentViewController(alertView, animated: true, completion: nil)
     }
     
     func showStudentLocations(locations: NSArray) {

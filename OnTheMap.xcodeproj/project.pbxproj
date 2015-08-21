@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2905FCC31B87BC5100A8062A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2905FCC21B87BC5100A8062A /* User.swift */; };
 		292396611B861AF800590987 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292396601B861AF800590987 /* Networking.swift */; };
 		293079B01B7E4477001E30F5 /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 293079AF1B7E4477001E30F5 /* InformationViewController.swift */; };
 		299EC4E51B766C5900FF744D /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 299EC4E41B766C5900FF744D /* MapKit.framework */; };
@@ -30,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2905FCC21B87BC5100A8062A /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		292396601B861AF800590987 /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
 		293079AF1B7E4477001E30F5 /* InformationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InformationViewController.swift; sourceTree = "<group>"; };
 		299EC4E41B766C5900FF744D /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
@@ -65,6 +67,36 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2905FCC41B87BCA200A8062A /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				293079AF1B7E4477001E30F5 /* InformationViewController.swift */,
+				299EC4E61B766E1500FF744D /* ListTableViewController.swift */,
+				29FE04BF1B7550ED00B2F7F5 /* LoginViewController.swift */,
+				299EC4E81B76702400FF744D /* MapViewController.swift */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		2905FCC51B87BCB300A8062A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				292396601B861AF800590987 /* Networking.swift */,
+				2905FCC21B87BC5100A8062A /* User.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		2905FCC61B87BCC700A8062A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				29FE04C41B7550EE00B2F7F5 /* Assets.xcassets */,
+				29FE04BD1B7550ED00B2F7F5 /* AppDelegate.swift */,
+				29FE04C91B7550EE00B2F7F5 /* Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		29FE04B11B7550ED00B2F7F5 = {
 			isa = PBXGroup;
 			children = (
@@ -87,15 +119,10 @@
 		29FE04BC1B7550ED00B2F7F5 /* OnTheMap */ = {
 			isa = PBXGroup;
 			children = (
-				29FE04BD1B7550ED00B2F7F5 /* AppDelegate.swift */,
-				293079AF1B7E4477001E30F5 /* InformationViewController.swift */,
-				299EC4E61B766E1500FF744D /* ListTableViewController.swift */,
-				29FE04BF1B7550ED00B2F7F5 /* LoginViewController.swift */,
-				299EC4E81B76702400FF744D /* MapViewController.swift */,
-				292396601B861AF800590987 /* Networking.swift */,
 				29FE04C11B7550ED00B2F7F5 /* Main.storyboard */,
-				29FE04C41B7550EE00B2F7F5 /* Assets.xcassets */,
-				29FE04C91B7550EE00B2F7F5 /* Info.plist */,
+				2905FCC41B87BCA200A8062A /* ViewControllers */,
+				2905FCC51B87BCB300A8062A /* Model */,
+				2905FCC61B87BCC700A8062A /* Resources */,
 			);
 			path = OnTheMap;
 			sourceTree = "<group>";
@@ -219,6 +246,7 @@
 				292396611B861AF800590987 /* Networking.swift in Sources */,
 				299EC4E91B76702400FF744D /* MapViewController.swift in Sources */,
 				293079B01B7E4477001E30F5 /* InformationViewController.swift in Sources */,
+				2905FCC31B87BC5100A8062A /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

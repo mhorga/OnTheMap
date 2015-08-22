@@ -49,23 +49,16 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     func getStudentLocations() {
-        let request = NSMutableURLRequest(URL: NSURL(string: Networking.Constants.parseURL)!)
-        request.addValue("-updatedAt", forHTTPHeaderField: "order")
-        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
-        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request) { data, response, error in
+        Networking.sharedInstance().taskForGetStudentLocations { (data, error) -> Void in
             if error != nil {
                 self.showAlert("Download failed.")
                 return
             } else {
-                let parsedResult = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments, error: nil) as! NSDictionary
                 let listTab = self.tabBarController?.viewControllers?.last as! ListTableViewController
-                listTab.locations = parsedResult["results"] as! NSArray
-                self.showStudentLocations(parsedResult["results"] as! NSArray)
+                listTab.locations = data!
+                self.showStudentLocations(data!)
             }
         }
-        task.resume()
     }
     
     

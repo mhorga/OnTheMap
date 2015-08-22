@@ -40,24 +40,7 @@ class ListTableViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     @IBAction func logout(sender: UIBarButtonItem) {
-        let request = NSMutableURLRequest(URL: NSURL(string: "https://www.udacity.com/api/session")!)
-        request.HTTPMethod = "DELETE"
-        var xsrfCookie: NSHTTPCookie? = nil
-        let sharedCookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-        for cookie in sharedCookieStorage.cookies! {
-            if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie as? NSHTTPCookie }
-        }
-        if let xsrfCookie = xsrfCookie {
-            request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
-        }
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request) { data, response, error in
-            if error != nil {
-                print(error!)
-                return
-            }
-        }
-        task.resume()
+        let task = Networking.taskForLogout()
         dismissViewControllerAnimated(true, completion: nil)
     }
     

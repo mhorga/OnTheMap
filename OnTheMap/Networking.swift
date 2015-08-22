@@ -16,35 +16,7 @@ class Networking: NSObject {
         static let udacitySignUpURL: String = "https://www.udacity.com/account/auth#!/signup"
     }
     
-    struct JSONKeys {
-        static let Session = "session"
-        static let Users = "users"
-        static let UserID = "<user_id>"
-        static let Udacity = "udacity"
-        static let Username = "username"
-        static let Password = "password"
-        static let User = "user"
-        static let Account = "account"
-        static let Email = "email"
-        static let LastName = "last_name"
-        static let FirstName = "first_name"
-        static let Registered = "registered"
-        static let Key = "key"
-        static let ID = "id"
-        static let Expiration = "expiration"
-        static let Verified = "_verified"
-        static let Address = "address"
-    }
-    
-    /* Shared session */
     var session: NSURLSession
-    
-    /* Configuration object */
-    //var config = Networking()
-    
-    /* Authentication state */
-    var sessionID : String? = nil
-    var userID : Int? = nil
     
     // MARK: - Initialization
     
@@ -67,13 +39,13 @@ class Networking: NSObject {
     }
     
     func loginToUdacity(user: User, completionHandler: (success: Bool, returnKey: String?, errorString: String?) -> Void) {
-        let task = taskForUdacity(user) { JSONResult, error in
+        let task = taskForUdacity(user) { result, error in
             if let error = error {
                 completionHandler(success: false, returnKey: "none", errorString: "No connection available.")
             } else {
-                if let result = JSONResult.valueForKey(JSONKeys.Account) as? NSDictionary {
-                    if let isRegistered = result.valueForKey(JSONKeys.Registered) as? Bool {
-                        var localKey = result.valueForKey(JSONKeys.Key) as! String
+                if let result = result.valueForKey("account") as? NSDictionary {
+                    if let isRegistered = result.valueForKey("registered") as? Bool {
+                        var localKey = result.valueForKey("key") as! String
                         completionHandler(success: true, returnKey: localKey, errorString: nil)
                     }
                 } else {
@@ -93,7 +65,6 @@ class Networking: NSObject {
         request.HTTPBody = "{\"udacity\": {\"username\": \"\(user.username)\", \"password\": \"\(user.password)\"}}".dataUsingEncoding(NSUTF8StringEncoding)
         let task = self.session.dataTaskWithRequest(request) {data, response, downloadError in
             if let error = downloadError {
-                let newError = NSError(domain: "OnTheMap Error", code: 1, userInfo: nil)
                 completionHandler(result: nil, error: downloadError)
             } else {
                 let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
@@ -102,6 +73,40 @@ class Networking: NSObject {
         }
         task.resume()
         return task
+    }
+    
+    func taskForGetStudentLocations(completionHandler: (data: [[String: AnyObject]]?, errorString: String?) -> Void) {
+        let url = NSURL(string: Constants.parseURL)!
+        let request = NSMutableURLRequest(URL: url)
+        request.addValue("-updatedAt", forHTTPHeaderField: "order")
+        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request) { data, response, error in
+            if error != nil {
+                completionHandler(data: nil, errorString: error!.localizedDescription)
+                return
+            }
+            var parsingError: NSError? = nil
+            if let parsedData = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments, error: &parsingError) as? [String: AnyObject] {
+                    if parsingError == nil {
+                        if let students = parsedData["results"] as? [[String: AnyObject]]{
+                            completionHandler(data: students, errorString: nil)
+                        } else {
+                            if let errorResults = parsedData["error"] as? String{
+                                completionHandler(data: nil, errorString: "\(errorResults): validate keys")
+                            } else {
+                                completionHandler(data: nil, errorString: "Unable to load students data")
+                            }
+                        }
+                    } else {
+                        completionHandler(data: nil, errorString: error!.localizedDescription)
+                    }
+            } else {
+                completionHandler(data: nil, errorString: "Unable to parse data")
+            }
+        }
+        task.resume()
     }
     
     class func taskForLogout() -> NSURLSessionDataTask {

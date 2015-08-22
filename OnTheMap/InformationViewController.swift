@@ -114,8 +114,7 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
                 request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
                 request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
                 request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-                request.HTTPBody = "{\"uniqueKey\": \(self.userID!), \"firstName\": \"\(self.firstName!)\", \"lastName\": \"\(self.lastName!)\",\"mapString\": \"\(self.locationTextField.text!)\", \"mediaURL\": \"\(self.urlTextField.text!)\",\"latitude\": \(String(stringInterpolationSegment: latitude)), \"longitude\": \(String(stringInterpolationSegment: longitude))}".dataUsingEncoding(NSUTF8StringEncoding)
-                print("\(self.userID!) \(self.firstName!) \(self.lastName!) \(self.locationTextField.text!) \(self.urlTextField.text!) \(latitude) \(longitude)")
+                request.HTTPBody = "{\"uniqueKey\": \"\(self.userID!)\", \"firstName\": \"\(self.firstName!)\", \"lastName\": \"\(self.lastName!)\",\"mapString\": \"\(self.locationTextField.text!)\", \"mediaURL\": \"\(self.urlTextField.text!)\",\"latitude\": \(latitude), \"longitude\": \(longitude)}".dataUsingEncoding(NSUTF8StringEncoding)
                 let session = NSURLSession.sharedSession()
                 let task = session.dataTaskWithRequest(request) { data, response, error in
                     if error != nil {

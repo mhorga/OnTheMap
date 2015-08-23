@@ -24,6 +24,7 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
     var userID: String?
     var firstName: String?
     var lastName: String?
+    //var user: User?
     
     override func viewDidLoad() {
         locationTextField.delegate = self
@@ -109,41 +110,40 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
         let localSearch = MKLocalSearch(request: localSearchRequest)
         localSearch.startWithCompletionHandler { (response, error) -> Void in
             if let latitude = response?.boundingRegion.center.latitude, longitude = response?.boundingRegion.center.longitude {
-                let request = NSMutableURLRequest(URL: NSURL(string: "https://api.parse.com/1/classes/StudentLocation")!)
-                request.HTTPMethod = "POST"
-                request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
-                request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
-                request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-                request.HTTPBody = "{\"uniqueKey\": \"\(self.userID!)\", \"firstName\": \"\(self.firstName!)\", \"lastName\": \"\(self.lastName!)\",\"mapString\": \"\(self.locationTextField.text!)\", \"mediaURL\": \"\(self.urlTextField.text!)\",\"latitude\": \(latitude), \"longitude\": \(longitude)}".dataUsingEncoding(NSUTF8StringEncoding)
-                let session = NSURLSession.sharedSession()
-                let task = session.dataTaskWithRequest(request) { data, response, error in
+                var user = User()
+                //let details = ["uniqueKey": self.userID!, "firstName": self.firstName!, "lastName": self.lastName!, "mapString": self.locationTextField.text!, "mediaURL": self.urlTextField.text!, "latitude": latitude, "longitude": longitude]
+                user.userID = self.userID!
+                user.firstName = self.firstName!
+                user.lastName = self.lastName!
+                user.mapString = self.locationTextField.text!
+                user.mediaURL = self.urlTextField.text!
+                user.latitude = latitude
+                user.longitude = longitude
+                let task = Networking.taskForUpdateLocation(user, completionHandler: { (result, error) -> Void in
                     if error != nil {
-                        self.showAlert("Location updating failed.")
+                        self.showAlert(error!.localizedDescription)
                         return
                     }
-                    print(NSString(data: data!, encoding: NSUTF8StringEncoding)!)
-                }
+                })
                 task.resume()
             }
         }
     }
     
     func getUserData(userID: String) {
-        let url = "https://www.udacity.com/api/users/\(userID)"
-        let request = NSMutableURLRequest(URL: NSURL(string: url)!)
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request) { data, response, error in
+        let task = Networking.taskForGetUserData(userID) { (result, error) -> Void in
             if error != nil {
-                print(error!)
+                self.showAlert(error!.localizedDescription)
                 return
+            } else {
+                let dictionary = result as! NSDictionary
+                if dictionary["user"] != nil {
+                    if let first = dictionary["user"]!["first_name"]! as? String, last = dictionary["user"]!["last_name"]! as? String {
+                        self.firstName = first
+                        self.lastName = last
+                    }
+                }
             }
-            let newData = data!.subdataWithRange(NSMakeRange(5, data!.length - 5)) /* subset response data! */
-            let parsedResult = NSJSONSerialization.JSONObjectWithData(newData, options: NSJSONReadingOptions.AllowFragments, error: nil) as! NSDictionary
-            if parsedResult["user"] != nil {
-                if let first = parsedResult["user"]!["first_name"]! as? String, last = parsedResult["user"]!["last_name"]! as? String {
-                    self.firstName = first
-                    self.lastName = last
-                }             }
         }
         task.resume()
     }

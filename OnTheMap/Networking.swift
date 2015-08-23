@@ -17,8 +17,7 @@ class Networking: NSObject {
     }
     
     var session: NSURLSession
-    
-    // MARK: - Initialization
+    static let sharedInstance = Networking() // Singleton
     
     convenience init?(dictionary: [String : AnyObject]) {
         self.init()
@@ -27,15 +26,6 @@ class Networking: NSObject {
     override init() {
         session = NSURLSession.sharedSession()
         super.init()
-    }
-    
-    // MARK: - Shared Instance
-    
-    class func sharedInstance() -> Networking {
-        struct Singleton {
-            static var sharedInstance = Networking()
-        }
-        return Singleton.sharedInstance
     }
     
     func loginToUdacity(user: User, completionHandler: (success: Bool, returnKey: String?, errorString: String?) -> Void) {
@@ -68,14 +58,20 @@ class Networking: NSObject {
                 completionHandler(result: nil, error: downloadError)
             } else {
                 let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
-                self.parseJSONWithCompletionHandler(newData, completionHandler: completionHandler)
+                var parsingError: NSError? = nil
+                let parsedResult: AnyObject? = NSJSONSerialization.JSONObjectWithData(newData, options: NSJSONReadingOptions.AllowFragments, error: &parsingError)
+                if let error = parsingError {
+                    completionHandler(result: nil, error: error)
+                } else {
+                    completionHandler(result: parsedResult, error: nil)
+                }
             }
         }
         task.resume()
         return task
     }
     
-    func taskForGetStudentLocations(completionHandler: (data: [[String: AnyObject]]?, errorString: String?) -> Void) {
+    class func taskForGetStudentLocations(completionHandler: (data: [[String: AnyObject]]?, errorString: String?) -> Void) {
         let url = NSURL(string: Constants.parseURL)!
         let request = NSMutableURLRequest(URL: url)
         request.addValue("-updatedAt", forHTTPHeaderField: "order")
@@ -131,13 +127,38 @@ class Networking: NSObject {
         return task
     }
     
-    func parseJSONWithCompletionHandler(data: NSData, completionHandler: (result: AnyObject!, error: NSError?) -> Void) {
-        var parsingError: NSError? = nil
-        let parsedResult: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments, error: &parsingError)
-        if let error = parsingError {
-            completionHandler(result: nil, error: error)
-        } else {
-            completionHandler(result: parsedResult, error: nil)
+    class func taskForUpdateLocation(user: User, completionHandler: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
+        let request = NSMutableURLRequest(URL: NSURL(string: "https://api.parse.com/1/classes/StudentLocation")!)
+        request.HTTPMethod = "POST"
+        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.HTTPBody = "{\"uniqueKey\": \"\(user.userID)\", \"firstName\": \"\(user.firstName)\", \"lastName\": \"\(user.lastName)\",\"mapString\": \"\(user.mapString)\", \"mediaURL\": \"\(user.mediaURL)\",\"latitude\": \(user.latitude), \"longitude\": \(user.longitude)}".dataUsingEncoding(NSUTF8StringEncoding)
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request) { data, response, error in
+            if error != nil {
+                completionHandler(result: nil, error: error)
+                return
+            }
         }
+        task.resume()
+        return task
+    }
+    
+    class func taskForGetUserData(userID: String, completionHandler: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
+        let url = "https://www.udacity.com/api/users/\(userID)"
+        let request = NSMutableURLRequest(URL: NSURL(string: url)!)
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request) { data, response, error in
+            if let error = error {
+                completionHandler(result: nil, error: error)
+            } else {
+                let newData = data!.subdataWithRange(NSMakeRange(5, data!.length - 5)) // subset response data!
+                let parsedResult = NSJSONSerialization.JSONObjectWithData(newData, options: NSJSONReadingOptions.AllowFragments, error: nil) as! NSDictionary
+                completionHandler(result: parsedResult, error: nil)
+            }
+        }
+        task.resume()
+        return task
     }
 }

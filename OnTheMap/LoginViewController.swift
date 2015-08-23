@@ -13,25 +13,23 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
-    var user =  User()
-    
     @IBAction func loginButton(sender: UIButton) {
-        user.username = emailTextField.text
-        user.password = passwordTextField.text
-        Networking.sharedInstance().loginToUdacity(user) { (success, returnKey, errorString) in
+        let credentials = ["username": emailTextField.text, "password": passwordTextField.text]
+        var user = User(credentials: credentials)
+        Networking.sharedInstance.loginToUdacity(user) { (success, returnKey, errorString) in
             if errorString != nil {
                 dispatch_async(dispatch_get_main_queue(), {
                     self.showAlert(errorString!)
                 })
             } else {
                 if success {
-                    self.user.userID = returnKey!
+                    user.userID = returnKey!
                     dispatch_async(dispatch_get_main_queue(), {
                         let controller = self.storyboard?.instantiateViewControllerWithIdentifier("tabBar") as! UITabBarController
                         let mapVC = controller.customizableViewControllers?.first as! MapViewController
-                        mapVC.userID = self.user.userID
+                        mapVC.userID = user.userID
                         let listTVC = controller.customizableViewControllers?.last as! ListTableViewController
-                        listTVC.userID = self.user.userID
+                        listTVC.userID = user.userID
                         self.presentViewController(controller, animated: true, completion: nil)
                     })
                 } else {

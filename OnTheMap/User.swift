@@ -8,13 +8,22 @@
 
 import Foundation
 
-class User: NSObject {
-    
+struct User {
     var username = ""
     var password = ""
     var userID = ""
+    var firstName = ""
+    var lastName = ""
+    var mapString = ""
+    var mediaURL = ""
+    var latitude = 0.0
+    var longitude = 0.0
     
-    override init() {
-        super.init()
+    init() {
+    }
+    
+    init(credentials: NSDictionary) {
+        username = credentials["username"] as! String
+        password = credentials["password"] as! String
     }
 }

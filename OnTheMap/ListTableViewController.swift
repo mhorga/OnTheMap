@@ -18,6 +18,10 @@ class ListTableViewController: UIViewController, UITableViewDataSource, UITableV
         super.viewDidLoad()
     }
     
+    override func viewDidAppear(animated: Bool) {
+        tableView.reloadData()
+    }
+    
     @IBAction func changeDetails(sender: UIBarButtonItem) {
         let controller = self.storyboard?.instantiateViewControllerWithIdentifier("infoVC") as! InformationViewController
         if userID != nil {

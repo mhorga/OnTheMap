@@ -18,7 +18,19 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        updateMap()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        updateMap()
+    }
+    
+    func updateMap() {
+        activityIndicator.hidden = false
+        activityIndicator.startAnimating()
+        mapView.removeAnnotations(mapView.annotations)
         getStudentLocations()
+        activityIndicator.stopAnimating()
         activityIndicator.hidden = true
     }
 
@@ -49,9 +61,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     func getStudentLocations() {
-        Networking.sharedInstance().taskForGetStudentLocations { (data, error) -> Void in
+        Networking.taskForGetStudentLocations { (data, error) -> Void in
             if error != nil {
-                self.showAlert("Download failed.")
+                self.showAlert(error!)
                 return
             } else {
                 let listTab = self.tabBarController?.viewControllers?.last as! ListTableViewController
@@ -60,7 +72,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             }
         }
     }
-    
     
     func showAlert(message: String) {
         let alertView = UIAlertController(title: "", message: message, preferredStyle: .Alert)

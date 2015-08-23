@@ -110,15 +110,8 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
         let localSearch = MKLocalSearch(request: localSearchRequest)
         localSearch.startWithCompletionHandler { (response, error) -> Void in
             if let latitude = response?.boundingRegion.center.latitude, longitude = response?.boundingRegion.center.longitude {
-                var user = User()
-                //let details = ["uniqueKey": self.userID!, "firstName": self.firstName!, "lastName": self.lastName!, "mapString": self.locationTextField.text!, "mediaURL": self.urlTextField.text!, "latitude": latitude, "longitude": longitude]
-                user.userID = self.userID!
-                user.firstName = self.firstName!
-                user.lastName = self.lastName!
-                user.mapString = self.locationTextField.text!
-                user.mediaURL = self.urlTextField.text!
-                user.latitude = latitude
-                user.longitude = longitude
+                let details = ["uniqueKey": self.userID!, "firstName": self.firstName!, "lastName": self.lastName!, "mapString": self.locationTextField.text!, "mediaURL": self.urlTextField.text!, "latitude": latitude, "longitude": longitude]
+                var user = User(userDetails: details)
                 let task = Networking.taskForUpdateLocation(user, completionHandler: { (result, error) -> Void in
                     if error != nil {
                         self.showAlert(error!.localizedDescription)

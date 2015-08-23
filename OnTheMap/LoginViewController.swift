@@ -14,8 +14,9 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passwordTextField: UITextField!
     
     @IBAction func loginButton(sender: UIButton) {
-        let credentials = ["username": emailTextField.text, "password": passwordTextField.text]
-        var user = User(credentials: credentials)
+        var user = User()
+        user.username = emailTextField.text
+        user.password = passwordTextField.text
         Networking.sharedInstance.loginToUdacity(user) { (success, returnKey, errorString) in
             if errorString != nil {
                 dispatch_async(dispatch_get_main_queue(), {

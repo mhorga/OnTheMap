@@ -22,8 +22,18 @@ struct User {
     init() {
     }
     
-    init(credentials: NSDictionary) {
-        username = credentials["username"] as! String
-        password = credentials["password"] as! String
+//    init(credentials: NSDictionary) {
+//        username = credentials["username"] as! String
+//        password = credentials["password"] as! String
+//    }
+    
+    init(userDetails: NSDictionary) {
+        userID = userDetails["uniqueKey"] as! String
+        firstName = userDetails["firstName"] as! String
+        lastName = userDetails["lastName"] as! String
+        mapString = userDetails["mapString"] as! String
+        mediaURL = userDetails["mediaURL"] as! String
+        latitude = userDetails["latitude"] as! Double
+        longitude = userDetails["longitude"] as! Double
     }
 }

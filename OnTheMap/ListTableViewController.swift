@@ -44,12 +44,12 @@ class ListTableViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     @IBAction func logout(sender: UIBarButtonItem) {
-        let task = Networking.taskForLogout()
+        _ = Networking.taskForLogout()
         dismissViewControllerAnimated(true, completion: nil)
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell") as! UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell")! as UITableViewCell
         let location = locations[indexPath.row] as! NSDictionary
         let firstName = location.valueForKey("firstName") as! String
         let lastName = location.valueForKey("lastName") as! String

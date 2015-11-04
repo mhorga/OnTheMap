@@ -41,7 +41,7 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
         return true
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.view.endEditing(true)
     }
     
@@ -56,7 +56,7 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
         self.activityIndicator.hidden = false
         self.activityIndicator.startAnimating()
         if self.mapView.annotations.count != 0 {
-            let annotation = self.mapView.annotations[0] as! MKAnnotation
+            let annotation = self.mapView.annotations[0] 
             self.mapView.removeAnnotation(annotation)
         }
         let localSearchRequest = MKLocalSearchRequest()
@@ -111,7 +111,7 @@ class InformationViewController: UIViewController, UITextFieldDelegate {
         localSearch.startWithCompletionHandler { (response, error) -> Void in
             if let latitude = response?.boundingRegion.center.latitude, longitude = response?.boundingRegion.center.longitude {
                 let details = ["uniqueKey": self.userID!, "firstName": self.firstName!, "lastName": self.lastName!, "mapString": self.locationTextField.text!, "mediaURL": self.urlTextField.text!, "latitude": latitude, "longitude": longitude]
-                var user = User(userDetails: details)
+                let user = User(userDetails: details)
                 let task = Networking.taskForUpdateLocation(user, completionHandler: { (result, error) -> Void in
                     if error != nil {
                         self.showAlert(error!.localizedDescription)

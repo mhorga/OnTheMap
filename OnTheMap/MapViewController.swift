@@ -56,7 +56,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     @IBAction func logout(sender: UIBarButtonItem) {
-        let task = Networking.taskForLogout()
+        _ = Networking.taskForLogout()
         dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -110,7 +110,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
             pin!.pinColor = .Red
             pin!.canShowCallout = true
-            pin!.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonType.DetailDisclosure) as! UIButton
+            pin!.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure)
         } else {
             pin!.annotation = annotation
         }

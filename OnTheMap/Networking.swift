@@ -30,12 +30,12 @@ class Networking: NSObject {
     
     func loginToUdacity(user: User, completionHandler: (success: Bool, returnKey: String?, errorString: String?) -> Void) {
         let task = taskForUdacity(user) { result, error in
-            if let error = error {
+            if let _ = error {
                 completionHandler(success: false, returnKey: "none", errorString: "No connection available.")
             } else {
                 if let result = result.valueForKey("account") as? NSDictionary {
-                    if let isRegistered = result.valueForKey("registered") as? Bool {
-                        var localKey = result.valueForKey("key") as! String
+                    if let _ = result.valueForKey("registered") as? Bool {
+                        let localKey = result.valueForKey("key") as! String
                         completionHandler(success: true, returnKey: localKey, errorString: nil)
                     }
                 } else {
@@ -54,16 +54,21 @@ class Networking: NSObject {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.HTTPBody = "{\"udacity\": {\"username\": \"\(user.username)\", \"password\": \"\(user.password)\"}}".dataUsingEncoding(NSUTF8StringEncoding)
         let task = self.session.dataTaskWithRequest(request) {data, response, downloadError in
-            if let error = downloadError {
+            if let _ = downloadError {
                 completionHandler(result: nil, error: downloadError)
             } else {
-                let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
-                var parsingError: NSError? = nil
-                let parsedResult: AnyObject? = NSJSONSerialization.JSONObjectWithData(newData, options: NSJSONReadingOptions.AllowFragments, error: &parsingError)
-                if let error = parsingError {
-                    completionHandler(result: nil, error: error)
-                } else {
-                    completionHandler(result: parsedResult, error: nil)
+                let newData = data!.subdataWithRange(NSMakeRange(5, data!.length - 5))
+                let parsingError: NSError? = nil
+                let parsedResult: AnyObject?
+                do {
+                     parsedResult = try NSJSONSerialization.JSONObjectWithData(newData, options: NSJSONReadingOptions.AllowFragments)
+                    if let error = parsingError {
+                        completionHandler(result: nil, error: error)
+                    } else {
+                        completionHandler(result: parsedResult, error: nil)
+                    }
+                } catch let error {
+                    print(error)
                 }
             }
         }
@@ -83,8 +88,9 @@ class Networking: NSObject {
                 completionHandler(data: nil, errorString: error!.localizedDescription)
                 return
             }
-            var parsingError: NSError? = nil
-            if let parsedData = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments, error: &parsingError) as? [String: AnyObject] {
+            let parsingError: NSError? = nil
+            do {
+                if let parsedData = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? [String: AnyObject] {
                     if parsingError == nil {
                         if let students = parsedData["results"] as? [[String: AnyObject]]{
                             completionHandler(data: students, errorString: nil)
@@ -98,8 +104,11 @@ class Networking: NSObject {
                     } else {
                         completionHandler(data: nil, errorString: error!.localizedDescription)
                     }
-            } else {
-                completionHandler(data: nil, errorString: "Unable to parse data")
+                } else {
+                    completionHandler(data: nil, errorString: "Unable to parse data")
+                }
+            } catch _ {
+                print("Error")
             }
         }
         task.resume()
@@ -111,7 +120,7 @@ class Networking: NSObject {
         var xsrfCookie: NSHTTPCookie? = nil
         let sharedCookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
         for cookie in sharedCookieStorage.cookies! {
-            if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie as? NSHTTPCookie }
+            if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie }
         }
         if let xsrfCookie = xsrfCookie {
             request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
@@ -154,8 +163,13 @@ class Networking: NSObject {
                 completionHandler(result: nil, error: error)
             } else {
                 let newData = data!.subdataWithRange(NSMakeRange(5, data!.length - 5)) // subset response data!
-                let parsedResult = NSJSONSerialization.JSONObjectWithData(newData, options: NSJSONReadingOptions.AllowFragments, error: nil) as! NSDictionary
-                completionHandler(result: parsedResult, error: nil)
+                let parsedResult: NSDictionary?
+                do {
+                    parsedResult = try NSJSONSerialization.JSONObjectWithData(newData, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    completionHandler(result: parsedResult, error: nil)
+                } catch _ {
+                    print("Error")
+                }
             }
         }
         task.resume()
